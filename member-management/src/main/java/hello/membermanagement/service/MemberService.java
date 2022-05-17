@@ -3,16 +3,20 @@ package hello.membermanagement.service;
 import hello.membermanagement.domain.Member;
 import hello.membermanagement.repository.MemberRepository;
 import hello.membermanagement.repository.MemoryMemberRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+//@Service    // Spring Bean Registration by component scan
 public class MemberService {
     private final MemberRepository memberRepository;
 
     // Dependency Injection
+//    @Autowired
     public MemberService(MemberRepository memberRepository) {
-        this.memberRepository = memberRepository;
+        this.memberRepository = memberRepository;   // final 변수를 생성자로 초기화
     }
     // TODO: DI 정리
 
