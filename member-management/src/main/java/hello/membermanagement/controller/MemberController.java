@@ -4,8 +4,11 @@ import hello.membermanagement.domain.Member;
 import hello.membermanagement.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+
+import java.util.List;
 
 @Controller // Spring Bean Registration by component scan
 public class MemberController {
@@ -41,5 +44,12 @@ public class MemberController {
         memberService.join(member);
 
         return "redirect:/";    // 회원가입이 끝나면 홈 화면으로 돌아간다.
+    }
+
+    @GetMapping("/members")
+    public String list(Model model) {
+        List<Member> members = memberService.findMembers();
+        model.addAttribute("members", members);
+        return "members/memberList";
     }
 }
