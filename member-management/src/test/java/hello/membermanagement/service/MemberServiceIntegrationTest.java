@@ -1,41 +1,35 @@
 package hello.membermanagement.service;
 
 import hello.membermanagement.domain.Member;
+import hello.membermanagement.repository.MemberRepository;
 import hello.membermanagement.repository.MemoryMemberRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
 
-class MemberServiceTest {   // 단위테스트
-    MemberService memberService;
-    MemoryMemberRepository memberRepository;
-
-    @BeforeEach
-    public void beforeEach(){
-        memberRepository = new MemoryMemberRepository();
-        memberService = new MemberService(memberRepository);
-    }
-
-    @AfterEach  //TODO: 이게 왜 문제가 되는건지 다시 확인
-    public void afterEach() {
-        memberRepository.clearStore();
-    }
+@SpringBootTest // 스프링 컨테이너와 테스트를 함께 실행한다.
+@Transactional  // Transaction 이후 Commit 하지 않고 Rollback 하여 DB를 되돌린다. -> 다음 테스트에 영향을 주지 않는다!
+class MemberServiceIntegrationTest {    // 통합테스트, 단위테스트보다 느리기 때문에 지양해야한다.
+    @Autowired MemberService memberService;
+    @Autowired MemberRepository memberRepository;
 
     @Test
     void join() {
-        // given : 이런 상황에서
+        // given
         Member member = new Member();
         member.setName("spring");
 
-        // when : 이것을 실행했을 때
+        // when
         Long saveId = memberService.join(member);
 
-        // then : 이런 결과가 나와야한다.
-        Member findMember = memberService.findOne(saveId).get();    // TODO: Warning check
+        // then
+        Member findMember = memberService.findOne(saveId).get();
         assertThat(member.getName()).isEqualTo(findMember.getName());
     }
 
@@ -54,22 +48,5 @@ class MemberServiceTest {   // 단위테스트
 
         // then
         assertThat(e.getMessage()).isEqualTo("이미 존재하는 회원입니다.");
-
-//        // try...catch... 구문
-//        try {
-//            memberService.join(member2);
-//            fail();
-//        } catch (IllegalStateException e) {
-//            assertThat(e.getMessage()).isEqualTo("이미 존재하는 회원입니다.");
-//        }
-
-    }
-
-    @Test
-    void findMembers() {
-    }
-
-    @Test
-    void findOne() {
     }
 }
