@@ -9,7 +9,6 @@ import hello.core.member.MemoryMemberRepository;
 
 public class OrderServiceImpl implements OrderService {
 
-    private final MemberRepository memberRepository = new MemoryMemberRepository();
     /**
      * DIP(Dependency Inversion Principle) Violation
      * 구현체가 아니라 추상체(인터페이스)에 의존해야한다.
@@ -23,7 +22,13 @@ public class OrderServiceImpl implements OrderService {
      * DIP를 지키기 위해 인터페이스에만 의존
      * -> NullPointException 발생
      */
-    private DiscountPolicy discountPolicy;
+    private final MemberRepository memberRepository;
+    private final DiscountPolicy discountPolicy;
+
+    public OrderServiceImpl(MemberRepository memberRepository, DiscountPolicy discountPolicy) {
+        this.memberRepository = memberRepository;
+        this.discountPolicy = discountPolicy;
+    }
 
     @Override
     public Order createOrder(Long memberId, String itemName, int itemPrice) {
