@@ -1,4 +1,4 @@
-package hello.core.scan;
+package hello.core.beandefinition.scan;
 
 import hello.core.AutoAppConfig;
 import hello.core.member.MemberRepository;

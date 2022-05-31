@@ -1,4 +1,4 @@
-package hello.core.scan.filter;
+package hello.core.beandefinition.scan.filter;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
