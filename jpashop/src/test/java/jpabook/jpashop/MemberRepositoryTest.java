@@ -20,7 +20,7 @@ public class MemberRepositoryTest {
 
     @Test
     @Transactional  // 테스트에 있으면 테스트가 끝나고 롤백
-//    @Rollback(false)
+    @Rollback(false)
     public void testMember() throws Exception {
         //given
         Member member = new Member();
