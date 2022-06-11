@@ -18,7 +18,7 @@ import java.util.Map;
 @WebServlet(name = "frontControllerServletV2", urlPatterns = "/front-controller/v2/*")
 public class FrontControllerServletV2 extends HttpServlet {
 
-    private Map<String, ControllerV2> controllerMap = new HashMap<>();
+    private final Map<String, ControllerV2> controllerMap = new HashMap<>();
 
     public FrontControllerServletV2() {
         controllerMap.put("/front-controller/v2/members/new-form", new MemberFormControllerV2());
