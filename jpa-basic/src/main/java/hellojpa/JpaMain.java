@@ -98,26 +98,62 @@ public class JpaMain {
 //            em.detach(member);  // 수정 내용이 영속되지 않음
 ////            em.clear();
 
-            Member member1 = new Member();
-            member1.setUsername("A");
 
-            Member member2 = new Member();
-            member2.setUsername("B");
 
-            Member member3 = new Member();
-            member3.setUsername("C");
+//            Member member1 = new Member();
+//            member1.setUsername("A");
+//
+//            Member member2 = new Member();
+//            member2.setUsername("B");
+//
+//            Member member3 = new Member();
+//            member3.setUsername("C");
+//
+//            System.out.println("============");
+//
+//            em.persist(member1);    // 1, 51
+//            em.persist(member2);    // Memory
+//            em.persist(member3);    // Memory
+//
+//            System.out.println("member1 = " + member1.getId());
+//            System.out.println("member2 = " + member2.getId());
+//            System.out.println("member3 = " + member3.getId());
+//
+//            System.out.println("============");
 
-            System.out.println("============");
 
-            em.persist(member1);    // 1, 51
-            em.persist(member2);    // Memory
-            em.persist(member3);    // Memory
+            // 저장
+            Team team = new Team();
+            team.setName("TeamA");
+            em.persist(team);
 
-            System.out.println("member1 = " + member1.getId());
-            System.out.println("member2 = " + member2.getId());
-            System.out.println("member3 = " + member3.getId());
+            Member member = new Member();
+            member.setUsername("member1");
+//            member.setTeamId(team.getId());
+//            member.setTeam(team); // 연관관계 주인의 값을 바꾸면 쿼리가 나간다.
+//            team.getMembers().add(member);  // 객체 상태를 위해 양방향 모두 값을 입력하거나,
+            member.changeTeam(team);    // 연관관계 편의 메서드 사용한다.
 
-            System.out.println("============");
+            em.persist(member);
+
+            // 영속성 컨텍스트 초기화
+//            em.flush();
+//            em.clear();
+
+            // 조회
+            Member findMember = em.find(Member.class, member.getId());
+
+//            Long findTeamId = findMember.getTeamId();
+//            Team findTeam = em.find(Team.class, findTeamId);
+
+//            Team findTeam = findMember.getTeam();
+//            System.out.println("findTeam.getName() = " + findTeam.getName());
+            System.out.println("==========");
+            List<Member> members = findMember.getTeam().getMembers();
+            for (Member m : members) {
+                System.out.println("m.getUsername() = " + m.getUsername());
+            }
+            System.out.println("==========");
 
             tx.commit();
 //            em.remove(member);  // 삭제, 영속에서 삭제
