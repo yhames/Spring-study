@@ -7,7 +7,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "ORDERS") // 데이터베이스에 따라 "ORDER"이 예약어로 되어있는 경우가 있다.
-public class Order {
+public class Order extends BaseEntity {
 
     @Id
     @GeneratedValue
