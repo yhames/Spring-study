@@ -12,7 +12,7 @@ import java.util.Date;
 //@TableGenerator(name = "member_seq_generator",
 //        table = "my_sequences",
 //        pkColumnValue = "member_seq", allocationSize = 1)
-public class Member {
+public class Member extends BaseEntity {
 
 //    @Id
 //    private Long id;

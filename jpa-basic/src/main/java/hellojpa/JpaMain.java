@@ -4,6 +4,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class JpaMain {
@@ -122,38 +123,63 @@ public class JpaMain {
 //            System.out.println("============");
 
 
-            // 저장
-            Team team = new Team();
-            team.setName("TeamA");
-            em.persist(team);
+//            // 저장
+//            Team team = new Team();
+//            team.setName("TeamA");
+//            em.persist(team);
+//
+//            Member member = new Member();
+//            member.setUsername("member1");
+////            member.setTeamId(team.getId());
+////            member.setTeam(team); // 연관관계 주인의 값을 바꾸면 쿼리가 나간다.
+////            team.getMembers().add(member);  // 객체 상태를 위해 양방향 모두 값을 입력하거나,
+//            member.changeTeam(team);    // 연관관계 편의 메서드 사용한다.
+//
+//            em.persist(member);
+//
+//            // 영속성 컨텍스트 초기화
+////            em.flush();
+////            em.clear();
+//
+//            // 조회
+//            Member findMember = em.find(Member.class, member.getId());
+//
+////            Long findTeamId = findMember.getTeamId();
+////            Team findTeam = em.find(Team.class, findTeamId);
+//
+////            Team findTeam = findMember.getTeam();
+////            System.out.println("findTeam.getName() = " + findTeam.getName());
+//            System.out.println("==========");
+//            List<Member> members = findMember.getTeam().getMembers();
+//            for (Member m : members) {
+//                System.out.println("m.getUsername() = " + m.getUsername());
+//            }
+//            System.out.println("==========");
 
-            Member member = new Member();
-            member.setUsername("member1");
-//            member.setTeamId(team.getId());
-//            member.setTeam(team); // 연관관계 주인의 값을 바꾸면 쿼리가 나간다.
-//            team.getMembers().add(member);  // 객체 상태를 위해 양방향 모두 값을 입력하거나,
-            member.changeTeam(team);    // 연관관계 편의 메서드 사용한다.
 
-            em.persist(member);
 
-            // 영속성 컨텍스트 초기화
+
+//            Movie movie = new Movie();
+//            movie.setName("movie1");
+//            movie.setDirector("director1");
+//            movie.setActor("actor1");
+//            movie.setPrice(10000);
+//
+//            em.persist(movie);
+//
 //            em.flush();
 //            em.clear();
+//
+//            Movie findMovie = em.find(Movie.class, movie.getId());
+//            System.out.println("findMovie = " + findMovie);
 
-            // 조회
-            Member findMember = em.find(Member.class, member.getId());
 
-//            Long findTeamId = findMember.getTeamId();
-//            Team findTeam = em.find(Team.class, findTeamId);
+            Member member = new Member();
+            member.setUsername("user1");
+            member.setCreatedBy("park");
+            member.setCreatedDate(LocalDateTime.now());
 
-//            Team findTeam = findMember.getTeam();
-//            System.out.println("findTeam.getName() = " + findTeam.getName());
-            System.out.println("==========");
-            List<Member> members = findMember.getTeam().getMembers();
-            for (Member m : members) {
-                System.out.println("m.getUsername() = " + m.getUsername());
-            }
-            System.out.println("==========");
+            em.persist(member);
 
             tx.commit();
 //            em.remove(member);  // 삭제, 영속에서 삭제
