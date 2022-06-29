@@ -1,5 +1,7 @@
 package hellojpa;
 
+import org.hibernate.Hibernate;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
@@ -46,7 +48,6 @@ public class JpaMain {
 //            }
 
 
-
 //            // 비영속
 //            Member member = new Member();
 //            member.setId(101L);
@@ -66,7 +67,6 @@ public class JpaMain {
 //            Member findMember2 = em.find(Member.class, 101L);   // 조히(select) 쿼리 미사용, 1차 캐시 사용
 //            // 1차 캐시로 반복가능 읽기 등급의 트랜잭션 격리 수준을 데이터베이스가 아닌 어플리케이션 차원에서 제공
 //            System.out.println("result = " + (findMember1 == findMember2)); // 같은 영속 컨텍스트/트랜잭션 안에서 동일성 보장
-
 
 
 //            Member member1 = new Member(150L, "A");
@@ -98,7 +98,6 @@ public class JpaMain {
 //
 //            em.detach(member);  // 수정 내용이 영속되지 않음
 ////            em.clear();
-
 
 
 //            Member member1 = new Member();
@@ -157,8 +156,6 @@ public class JpaMain {
 //            System.out.println("==========");
 
 
-
-
 //            Movie movie = new Movie();
 //            movie.setName("movie1");
 //            movie.setDirector("director1");
@@ -174,21 +171,129 @@ public class JpaMain {
 //            System.out.println("findMovie = " + findMovie);
 
 
-            Member member = new Member();
-            member.setUsername("user1");
-            member.setCreatedBy("park");
-            member.setCreatedDate(LocalDateTime.now());
+//            Member member = new Member();
+//            member.setUsername("user1");
+//            member.setCreatedBy("park");
+//            member.setCreatedDate(LocalDateTime.now());
+//
+//            em.persist(member);
 
-            em.persist(member);
+
+//            Member member1 = new Member();
+//            member1.setUsername("member1");
+//
+//            Member member2 = new Member();
+//            member2.setUsername("member2");
+//
+//            em.persist(member1);
+//            em.persist(member2);
+//            em.flush();
+//            em.clear();
+//
+////            Member findMember = em.find(Member.class, member.getId());
+//            Member refMember1 = em.getReference(Member.class, member1.getId());
+//            Member findMember2 = em.find(Member.class, member2.getId());
+//            System.out.println("refMember1.class = " + refMember1.getClass());
+//            System.out.println("refMember1.id = " + refMember1.getId());
+//            System.out.println("refMember1.name = " + refMember1.getUsername());
+//            logic(refMember1, findMember2);
+//            System.out.println("=================");
+//
+//            Member refMember2 = em.getReference(Member.class, member2.getId());
+//            System.out.println("findMember2.class = " + findMember2.getClass());
+//            System.out.println("refMember2.class = " + refMember2.getClass());
+//            logic(refMember2, findMember2);
+//            System.out.println("=================");
+//
+//            Member findMember1 = em.find(Member.class, member1.getId());
+//            System.out.println("refMember1.class = " + refMember1.getClass());
+//            System.out.println("findMember1.class = " + findMember1.getClass());
+//            logic(refMember1, findMember1);
+//            System.out.println("=================");
+
+
+//            Member member1 = new Member();
+//            member1.setUsername("member1");
+//
+//            em.persist(member1);
+//            em.flush();
+//            em.clear();
+//
+//            Member refMember1 = em.getReference(Member.class, member1.getId());
+//            System.out.println("refMember1.class = " + refMember1.getClass());
+////            em.detach(refMember1);
+////            System.out.println("refMember1 = " + refMember1.getUsername());
+//            System.out.println("is Loaded = " + emf.getPersistenceUnitUtil().isLoaded(refMember1));
+////            refMember1.getUsername();
+//            Hibernate.initialize(refMember1);
+//            System.out.println("is Loaded = " + emf.getPersistenceUnitUtil().isLoaded(refMember1));
+
+
+//            Team team1 = new Team();
+//            team1.setName("team1");
+//            em.persist(team1);
+//
+//            Team team2 = new Team();
+//            team2.setName("team2");
+//            em.persist(team2);
+//
+//            Member member1 = new Member();
+//            member1.setUsername("member1");
+//            member1.setTeam(team1);
+//            em.persist(member1);
+//
+//            Member member2 = new Member();
+//            member2.setUsername("member2");
+//            member2.setTeam(team2);
+//            em.persist(member2);
+//
+//            em.flush();
+//            em.clear();
+//
+////            Member m = em.find(Member.class, member.getId());
+////            System.out.println("m.getTeam().getClass() = " + m.getTeam().getClass());
+////            System.out.println("=====================");
+////            m.getTeam().getName();
+//            System.out.println("=====================");
+//
+//            List<Member> members = em.createQuery("select m from Member m join fetch m.team  ", Member.class)
+//                    .getResultList();
+
+            Parent parent = new Parent();
+            Child child1 = new Child();
+            Child child2 = new Child();
+
+            parent.addChild(child1);
+            parent.addChild(child2);
+
+            em.persist(parent);
+            em.persist(child1);
+            em.persist(child2);
+
+            em.flush();
+            em.clear();
+
+            Parent findParent = em.find(Parent.class, parent.getId());
+//            findParent.getChildList().remove(0);
+
+            em.remove(findParent);
 
             tx.commit();
-//            em.remove(member);  // 삭제, 영속에서 삭제
+//            em.remove(mem ber);  // 삭제, 영속에서 삭제
         } catch (Exception e) {
             tx.rollback();
+            e.printStackTrace();
         } finally {
             em.close();
         }
 
         emf.close();
+    }
+
+    private static void logic(Member refMember, Member findMember) {
+        System.out.println("refMember == findMember : " + (refMember.getClass() == findMember.getClass()));
+        System.out.println("refMember instance of Member : " + (refMember instanceof Member));
+        System.out.println("findMember instance of Member : " + (findMember instanceof Member));
+
     }
 }
