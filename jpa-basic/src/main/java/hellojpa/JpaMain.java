@@ -259,24 +259,36 @@ public class JpaMain {
 //            List<Member> members = em.createQuery("select m from Member m join fetch m.team  ", Member.class)
 //                    .getResultList();
 
-            Parent parent = new Parent();
-            Child child1 = new Child();
-            Child child2 = new Child();
 
-            parent.addChild(child1);
-            parent.addChild(child2);
 
-            em.persist(parent);
-            em.persist(child1);
-            em.persist(child2);
 
-            em.flush();
-            em.clear();
+//            Parent parent = new Parent();
+//            Child child1 = new Child();
+//            Child child2 = new Child();
+//
+//            parent.addChild(child1);
+//            parent.addChild(child2);
+//
+//            em.persist(parent);
+//            em.persist(child1);
+//            em.persist(child2);
+//
+//            em.flush();
+//            em.clear();
+//
+//            Parent findParent = em.find(Parent.class, parent.getId());
+////            findParent.getChildList().remove(0);
+//
+//            em.remove(findParent);
 
-            Parent findParent = em.find(Parent.class, parent.getId());
-//            findParent.getChildList().remove(0);
 
-            em.remove(findParent);
+
+            Member member = new Member();
+            member.setUsername("member1");
+            member.setHomeAddress(new Address("city", "street", "zipcode"));
+            member.setWorkPeriod(new Period());
+
+            em.persist(member);
 
             tx.commit();
 //            em.remove(mem ber);  // 삭제, 영속에서 삭제
@@ -290,10 +302,9 @@ public class JpaMain {
         emf.close();
     }
 
-    private static void logic(Member refMember, Member findMember) {
-        System.out.println("refMember == findMember : " + (refMember.getClass() == findMember.getClass()));
-        System.out.println("refMember instance of Member : " + (refMember instanceof Member));
-        System.out.println("findMember instance of Member : " + (findMember instanceof Member));
-
-    }
+//    private static void logic(Member refMember, Member findMember) {
+//        System.out.println("refMember == findMember : " + (refMember.getClass() == findMember.getClass()));
+//        System.out.println("refMember instance of Member : " + (refMember instanceof Member));
+//        System.out.println("findMember instance of Member : " + (findMember instanceof Member));
+//    }
 }

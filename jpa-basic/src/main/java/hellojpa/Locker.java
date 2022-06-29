@@ -14,6 +14,6 @@ public class Locker {
 
     private String name;
 
-    @OneToOne(mappedBy = "locker")  // 연관관계 주인의 변수명
-    private Member member;
+//    @OneToOne(mappedBy = "locker")  // 연관관계 주인의 변수명
+//    private Member member;
 }

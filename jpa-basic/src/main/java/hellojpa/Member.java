@@ -12,7 +12,7 @@ import java.util.Date;
 //@TableGenerator(name = "member_seq_generator",
 //        table = "my_sequences",
 //        pkColumnValue = "member_seq", allocationSize = 1)
-public class Member extends BaseEntity {
+public class Member {
 
 //    @Id
 //    private Long id;
@@ -103,6 +103,56 @@ public class Member extends BaseEntity {
 //    }
 
 
+//    @Id
+//    @GeneratedValue
+//    @Column(name = "MEMBER_ID")
+//    private Long id;
+//
+//    @Column(name = "USERNAME")
+//    private String username;
+
+//    @Column(name = "TEAM_ID")
+//    private Long teamId;
+
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "TEAM_ID")
+//    private Team team;
+//
+//    @OneToOne
+//    @JoinColumn(name = "LOCKER_ID")
+//    private Locker locker;
+//
+//
+//    public Long getId() {
+//        return id;
+//    }
+//
+//    public void setId(Long id) {
+//        this.id = id;
+//    }
+//
+//    public String getUsername() {
+//        return username;
+//    }
+//
+//    public void setUsername(String username) {
+//        this.username = username;
+//    }
+//
+//    public Team getTeam() {
+//        return team;
+//    }
+//
+//    public void setTeam(Team team) {
+//        this.team = team;
+//    }
+//
+//    public void changeTeam(Team team) {
+//        this.team = team;
+//        team.getMembers().add(this);
+//    }
+
+
     @Id
     @GeneratedValue
     @Column(name = "MEMBER_ID")
@@ -111,17 +161,22 @@ public class Member extends BaseEntity {
     @Column(name = "USERNAME")
     private String username;
 
-//    @Column(name = "TEAM_ID")
-//    private Long teamId;
+    @Embedded
+    private Period workPeriod;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "TEAM_ID")
-    private Team team;
+    @Embedded
+    private Address homeAddress;
 
-    @OneToOne
-    @JoinColumn(name = "LOCKER_ID")
-    private Locker locker;
-
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "city",
+                    column = @Column(name = "WORK_CITY")),
+            @AttributeOverride(name = "street",
+                    column = @Column(name = "WORK_STREET")),
+            @AttributeOverride(name = "zipcode",
+                    column = @Column(name = "WORK_ZIPCODE")),
+    })
+    private Address workAddress;
 
     public Long getId() {
         return id;
@@ -139,16 +194,19 @@ public class Member extends BaseEntity {
         this.username = username;
     }
 
-    public Team getTeam() {
-        return team;
+    public Period getWorkPeriod() {
+        return workPeriod;
     }
 
-    public void setTeam(Team team) {
-        this.team = team;
+    public void setWorkPeriod(Period workPeriod) {
+        this.workPeriod = workPeriod;
     }
 
-    public void changeTeam(Team team) {
-        this.team = team;
-        team.getMembers().add(this);
+    public Address getHomeAddress() {
+        return homeAddress;
+    }
+
+    public void setHomeAddress(Address homeAddress) {
+        this.homeAddress = homeAddress;
     }
 }
