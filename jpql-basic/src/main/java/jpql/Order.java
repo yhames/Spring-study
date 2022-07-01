@@ -3,6 +3,7 @@ package jpql;
 import javax.persistence.*;
 
 @Entity
+@Table(name = "ORDERS")
 public class Order {
 
     @Id
