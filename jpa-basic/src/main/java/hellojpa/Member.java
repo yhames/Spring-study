@@ -161,8 +161,8 @@ public class Member {
     @Column(name = "USERNAME")
     private String username;
 
-    @Embedded
-    private Period workPeriod;
+//    @Embedded
+//    private Period workPeriod;
 
     @Embedded
     private Address homeAddress;
@@ -183,16 +183,16 @@ public class Member {
     private List<AddressHistory> addressHistory = new ArrayList<>();
 
 
-    @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "city",
-                    column = @Column(name = "WORK_CITY")),
-            @AttributeOverride(name = "street",
-                    column = @Column(name = "WORK_STREET")),
-            @AttributeOverride(name = "zipcode",
-                    column = @Column(name = "WORK_ZIPCODE")),
-    })
-    private Address workAddress;
+//    @Embedded
+//    @AttributeOverrides({
+//            @AttributeOverride(name = "city",
+//                    column = @Column(name = "WORK_CITY")),
+//            @AttributeOverride(name = "street",
+//                    column = @Column(name = "WORK_STREET")),
+//            @AttributeOverride(name = "zipcode",
+//                    column = @Column(name = "WORK_ZIPCODE")),
+//    })
+//    private Address workAddress;
 
     public Long getId() {
         return id;
@@ -210,13 +210,13 @@ public class Member {
         this.username = username;
     }
 
-    public Period getWorkPeriod() {
-        return workPeriod;
-    }
-
-    public void setWorkPeriod(Period workPeriod) {
-        this.workPeriod = workPeriod;
-    }
+//    public Period getWorkPeriod() {
+//        return workPeriod;
+//    }
+//
+//    public void setWorkPeriod(Period workPeriod) {
+//        this.workPeriod = workPeriod;
+//    }
 
     public Address getHomeAddress() {
         return homeAddress;
@@ -251,11 +251,11 @@ public class Member {
         this.addressHistory = addressHistory;
     }
 
-    public Address getWorkAddress() {
-        return workAddress;
-    }
-
-    public void setWorkAddress(Address workAddress) {
-        this.workAddress = workAddress;
-    }
+//    public Address getWorkAddress() {
+//        return workAddress;
+//    }
+//
+//    public void setWorkAddress(Address workAddress) {
+//        this.workAddress = workAddress;
+//    }
 }

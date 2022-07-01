@@ -6,6 +6,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -301,67 +304,101 @@ public class JpaMain {
 ////            member1.getHomeAddress().setCity("newCity");
 
 
-
-
-            Address address = new Address("city", "street", "zipcode");
-            Member member = new Member();
-            member.setUsername("member1");
-            member.setHomeAddress(address);
-
-            member.getFavoriteFoods().add("chicken");
-            member.getFavoriteFoods().add("zokbal");
-            member.getFavoriteFoods().add("pizza");
-
-            member.getAddressHistory().add(new AddressHistory("old1", "street", "zipcode"));
-            member.getAddressHistory().add(new AddressHistory("old2", "street", "zipcode"));
-            member.getAddressHistory().add(new AddressHistory("old3", "street", "zipcode"));
-
-            em.persist(member);
-
-            em.flush();
-            em.clear();
-
-            System.out.println("========= EAGAR ========");
-            Member findMember = em.find(Member.class, member.getId());
-            System.out.println("========================");
-
+//            Address address = new Address("city", "street", "zipcode");
+//            Member member = new Member();
+//            member.setUsername("member1");
+//            member.setHomeAddress(address);
+//
+//            member.getFavoriteFoods().add("chicken");
+//            member.getFavoriteFoods().add("zokbal");
+//            member.getFavoriteFoods().add("pizza");
+//
+//            member.getAddressHistory().add(new AddressHistory("old1", "street", "zipcode"));
+//            member.getAddressHistory().add(new AddressHistory("old2", "street", "zipcode"));
+//            member.getAddressHistory().add(new AddressHistory("old3", "street", "zipcode"));
+//
+//            em.persist(member);
+//
+//            em.flush();
+//            em.clear();
+//
+//            System.out.println("========= EAGAR ========");
+//            Member findMember = em.find(Member.class, member.getId());
+//            System.out.println("========================");
+//
+////            System.out.println("========= LAZY ========");
+////            List<Address> addressHistory = findMember.getAddressHistory();
+////            for (Address a : addressHistory) {
+////                System.out.println("address = " + a.getCity());
+////            }
+////            System.out.println("=======================");
+//
 //            System.out.println("========= LAZY ========");
-//            List<Address> addressHistory = findMember.getAddressHistory();
-//            for (Address a : addressHistory) {
-//                System.out.println("address = " + a.getCity());
+//            Set<String> favoriteFoods = findMember.getFavoriteFoods();
+//            for (String favoriteFood : favoriteFoods) {
+//                System.out.println("favoriteFood = " + favoriteFood);
 //            }
 //            System.out.println("=======================");
+//
+////            findMember.getHomeAddress().setCity("newCity");
+//            Address a = findMember.getHomeAddress();
+//            findMember.setHomeAddress(new Address("newCity", a.getStreet(), a.getZipcode()));
+//
+//            System.out.println("======== element collection : foods change =======");
+//            // chicken to gukbab
+//            findMember.getFavoriteFoods().remove("chicken");
+//            findMember.getFavoriteFoods().add("gukbab");
+//            System.out.println("==================================================");
+//
+//
+//            System.out.println("======== element collection : address change =======");
+//            /**
+//             * 해당 엔티티와 관련된 데이터를 모두 다 지워버리고
+//             * 값타입 컬렉션에 남아있는 현재값을 모두 다시 저장한다.
+//             * 즉, 쓰면 안된다.
+//             */
+//            // old1 to new1, find object by overridden equals method
+////            findMember.getAddressHistory().remove(new Address("old1", "street", "zipcode"));    // using equals
+////            findMember.getAddressHistory().add(new Address("new1", "street", "zipcode"));
+//            System.out.println("====================================================");
 
-            System.out.println("========= LAZY ========");
-            Set<String> favoriteFoods = findMember.getFavoriteFoods();
-            for (String favoriteFood : favoriteFoods) {
-                System.out.println("favoriteFood = " + favoriteFood);
+
+
+
+            Member member1 = new Member();
+            member1.setUsername("kim");
+            em.persist(member1);
+
+            Member member2 = new Member();
+            member2.setUsername("park");
+            em.persist(member2);
+
+            // basic jpql
+            List<Member> result = em.createQuery(
+                    "select m from Member m where m.username like '%kim%'", Member.class
+            ).getResultList();
+
+            for (Member member : result) {
+                System.out.println("member.name  = " + member.getUsername());
             }
-            System.out.println("=======================");
 
-//            findMember.getHomeAddress().setCity("newCity");
-            Address a = findMember.getHomeAddress();
-            findMember.setHomeAddress(new Address("newCity", a.getStreet(), a.getZipcode()));
+            // criteria : Too complicated and impractical -> use QueryDSL
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery<Member> query = cb.createQuery(Member.class);
+            Root<Member> m = query.from(Member. class);
+            CriteriaQuery<Member> cq = query.select(m).where(cb.equal(m.get("username"), "%kim%"));
+            List<Member> criteriaResult = em.createQuery(cq).getResultList();
+            for (Member member : criteriaResult) {
+                System.out.println("member.name  = " + member.getUsername());
 
-            System.out.println("======== element collection : foods change =======");
-            // chicken to gukbab
-            findMember.getFavoriteFoods().remove("chicken");
-            findMember.getFavoriteFoods().add("gukbab");
-            System.out.println("==================================================");
+            }
 
-
-            System.out.println("======== element collection : address change =======");
-            /**
-             * 해당 엔티티와 관련된 데이터를 모두 다 지워버리고
-             * 값타입 컬렉션에 남아있는 현재값을 모두 다시 저장한다.
-             * 즉, 쓰면 안된다.
-             */
-            // old1 to new1, find object by overridden equals method
-//            findMember.getAddressHistory().remove(new Address("old1", "street", "zipcode"));    // using equals
-//            findMember.getAddressHistory().add(new Address("new1", "street", "zipcode"));
-            System.out.println("====================================================");
-
-
+            // native query
+            List<Member> nativeResult = em.createNativeQuery("select MEMBER_ID, city, street, zipcode, USERNAME from MEMBER", Member.class)
+                    .getResultList();
+            for (Member member : nativeResult) {
+                System.out.println("member.name  = " + member.getUsername());
+            }
 
             tx.commit();
 //            em.remove(mem ber);  // 삭제, 영속에서 삭제
