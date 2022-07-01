@@ -282,13 +282,21 @@ public class JpaMain {
 //            em.remove(findParent);
 
 
+            Address address = new Address("city", "street", "zipcode");
 
-            Member member = new Member();
-            member.setUsername("member1");
-            member.setHomeAddress(new Address("city", "street", "zipcode"));
-            member.setWorkPeriod(new Period());
+            Member member1 = new Member();
+            member1.setUsername("member1");
+            member1.setHomeAddress(address);
+            em.persist(member1);
 
-            em.persist(member);
+            Address copyAddress = new Address(address.getCity(), address.getStreet(), address.getZipcode());
+
+            Member member2 = new Member();
+            member2.setUsername("member2");
+            member2.setHomeAddress(copyAddress);
+            em.persist(member2);
+
+//            member1.getHomeAddress().setCity("newCity");
 
             tx.commit();
 //            em.remove(mem ber);  // 삭제, 영속에서 삭제
