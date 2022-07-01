@@ -8,6 +8,7 @@ import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 public class JpaMain {
     public static void main(String[] args) {
@@ -260,8 +261,6 @@ public class JpaMain {
 //                    .getResultList();
 
 
-
-
 //            Parent parent = new Parent();
 //            Child child1 = new Child();
 //            Child child2 = new Child();
@@ -282,21 +281,87 @@ public class JpaMain {
 //            em.remove(findParent);
 
 
+//            Address address = new Address("city", "street", "zipcode");
+//
+//            Member member1 = new Member();
+//            member1.setUsername("member1");
+//            member1.setHomeAddress(address);
+//            em.persist(member1);
+//
+//            Address copyAddress = new Address(address.getCity(), address.getStreet(), address.getZipcode());
+//
+//            Member member2 = new Member();
+//            member2.setUsername("member2");
+//            member2.setHomeAddress(copyAddress);
+//            em.persist(member2);
+//
+//            System.out.println("address == copyAddress: " + (address == copyAddress));
+//            System.out.println("address == copyAddress: " + address.equals(copyAddress));
+//
+////            member1.getHomeAddress().setCity("newCity");
+
+
+
+
             Address address = new Address("city", "street", "zipcode");
+            Member member = new Member();
+            member.setUsername("member1");
+            member.setHomeAddress(address);
 
-            Member member1 = new Member();
-            member1.setUsername("member1");
-            member1.setHomeAddress(address);
-            em.persist(member1);
+            member.getFavoriteFoods().add("chicken");
+            member.getFavoriteFoods().add("zokbal");
+            member.getFavoriteFoods().add("pizza");
 
-            Address copyAddress = new Address(address.getCity(), address.getStreet(), address.getZipcode());
+            member.getAddressHistory().add(new AddressHistory("old1", "street", "zipcode"));
+            member.getAddressHistory().add(new AddressHistory("old2", "street", "zipcode"));
+            member.getAddressHistory().add(new AddressHistory("old3", "street", "zipcode"));
 
-            Member member2 = new Member();
-            member2.setUsername("member2");
-            member2.setHomeAddress(copyAddress);
-            em.persist(member2);
+            em.persist(member);
 
-//            member1.getHomeAddress().setCity("newCity");
+            em.flush();
+            em.clear();
+
+            System.out.println("========= EAGAR ========");
+            Member findMember = em.find(Member.class, member.getId());
+            System.out.println("========================");
+
+//            System.out.println("========= LAZY ========");
+//            List<Address> addressHistory = findMember.getAddressHistory();
+//            for (Address a : addressHistory) {
+//                System.out.println("address = " + a.getCity());
+//            }
+//            System.out.println("=======================");
+
+            System.out.println("========= LAZY ========");
+            Set<String> favoriteFoods = findMember.getFavoriteFoods();
+            for (String favoriteFood : favoriteFoods) {
+                System.out.println("favoriteFood = " + favoriteFood);
+            }
+            System.out.println("=======================");
+
+//            findMember.getHomeAddress().setCity("newCity");
+            Address a = findMember.getHomeAddress();
+            findMember.setHomeAddress(new Address("newCity", a.getStreet(), a.getZipcode()));
+
+            System.out.println("======== element collection : foods change =======");
+            // chicken to gukbab
+            findMember.getFavoriteFoods().remove("chicken");
+            findMember.getFavoriteFoods().add("gukbab");
+            System.out.println("==================================================");
+
+
+            System.out.println("======== element collection : address change =======");
+            /**
+             * 해당 엔티티와 관련된 데이터를 모두 다 지워버리고
+             * 값타입 컬렉션에 남아있는 현재값을 모두 다시 저장한다.
+             * 즉, 쓰면 안된다.
+             */
+            // old1 to new1, find object by overridden equals method
+//            findMember.getAddressHistory().remove(new Address("old1", "street", "zipcode"));    // using equals
+//            findMember.getAddressHistory().add(new Address("new1", "street", "zipcode"));
+            System.out.println("====================================================");
+
+
 
             tx.commit();
 //            em.remove(mem ber);  // 삭제, 영속에서 삭제
