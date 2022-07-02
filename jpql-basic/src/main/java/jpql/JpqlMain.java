@@ -13,15 +13,24 @@ public class JpqlMain {
         try {
             Team team1 = new Team();
             team1.setName("team1");
-
             em.persist(team1);
 
-            Member member1 = new Member();
-            member1.setUsername("member1");
-            member1.setAge(10);
-            member1.setTeam(team1);
+            Team team2 = new Team();
+            team2.setName("team2");
+            em.persist(team2);
 
-            em.persist(member1);
+            for (int i = 0; i < 100; i++) {
+                Member member = new Member();
+                member.setUsername("member" + i);
+                member.setAge(i);
+                if (i < 30) {
+                    member.setTeam(team1);
+                } else if (i < 60) {
+                    member.setTeam(team2);
+                }
+                em.persist(member);
+            }
+
 
             TypedQuery<Member> query1 = em.createQuery("select m from Member as m", Member.class);
             TypedQuery<String> query2 = em.createQuery("select m.username from Member as m", String.class);
@@ -30,19 +39,19 @@ public class JpqlMain {
             // 결과가 1개 이상일 때, 없으면 빈 리스트 반환
             List<Member> resultList = query1.getResultList();
             for (Member result : resultList) {
-                System.out.println("getResultList = " + result.getUsername());
+                System.out.println("getResultList = " + result);
             }
 
             // 결과가 "정확히" 1개일 떄, 없거나 둘 이상이면 Exception
-            Member result = em.createQuery(("select m from Member m where m.id=" + member1.getId()), Member.class)
+            Member result = em.createQuery("select m from Member m where m.id=10L", Member.class)
                     .getSingleResult();
-            System.out.println("getSingleResult = " + result.getUsername());
+            System.out.println("getSingleResult = " + result);
 
             // 파라미터 바인딩
             Member singleResult = em.createQuery("select m from Member as m where m.username=:username", Member.class)
                     .setParameter("username", "member1")
                     .getSingleResult();
-            System.out.println("singleResult = " + singleResult.getUsername());
+            System.out.println("singleResult = " + singleResult);
 
             // 엔티티: 프로젝션 영속성컨텍스트 관리
             em.flush();
@@ -55,7 +64,7 @@ public class JpqlMain {
             List<Team> teamList = em.createQuery("select t from Member as m join m.team t", Team.class)
                     .getResultList();
             for (Team team : teamList) {
-                System.out.println("team.name = " + team.getName());
+                System.out.println("team = " + team);
             }
 
             // 임베디드타입
@@ -78,6 +87,16 @@ public class JpqlMain {
             MemberDTO memberDTO = dtoList.get(0);
             System.out.println("memberDTO.username = " + memberDTO.getUsername());
             System.out.println("memberDTO.age = " + memberDTO.getAge());
+
+            // 페이징
+            List<Member> orderList = em.createQuery("select m from Member as m order by m.age desc", Member.class)
+                    .setFirstResult(1)
+                    .setMaxResults(10)
+                    .getResultList();
+            System.out.println("orderList.size = " + orderList.size());
+            for (Member member : orderList) {
+                System.out.println("member = " + member);
+            }
 
             tx.commit();
         } catch (Exception e) {
