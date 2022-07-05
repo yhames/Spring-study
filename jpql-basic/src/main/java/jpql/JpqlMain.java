@@ -204,13 +204,46 @@ public class JpqlMain {
                 System.out.println("s = " + s.substring(0, 25) + "..." + s.substring(len-25, len));
             }
 
-            // fetch join
+            // fetch join : Many to one
             em.flush();
             em.clear();
-            List<Member> fetchList = em.createQuery("select m from Member m", Member.class).getResultList();
+            List<Member> fetchList = em.createQuery("select m from Member m join fetch m.team", Member.class).getResultList();
             for (Member member : fetchList) {
                 System.out.println("member = " + member.getUsername() + ", " + member.getTeam().getName());
             }
+
+
+            // fetch join : One to Many with distinct
+            em.flush();
+            em.clear();
+            List<Team> fetchList2 = em.createQuery("select distinct t from Team t join fetch t.members", Team.class).getResultList();
+            for (Team team : fetchList2) {
+                System.out.println("team = " + team.getName() + ", " + team.getMembers().size());
+//                for(Member member : team.getMembers()) {
+//                    System.out.println("     -> member = " + member);
+//                }
+            }
+
+            /**
+             * 1. 즉시로딩 N+1 문제 발생 -> 지연로딩 사용
+             * 2. 지연로딩에서 객체그래프 탐색시 N+1문제 발생 -> fetch join 으로 해결 가능
+             * 3. fetch join 불가능(성능저하, N*N) -> @Batchsize 설정하여 해결
+             */
+            // fetch join : paging X -> @Batchsize
+            em.flush();
+            em.clear();
+            List<Team> fetchList3 = em.createQuery("select t from Team t", Team.class)
+                    .setFirstResult(0)
+                    .setMaxResults(10)
+                    .getResultList();
+            for (Team team : fetchList3) {
+                System.out.println("team = " + team.getName() + ", members.size = " + team.getMembers().size());
+                for (Member member : team.getMembers()) {
+                    System.out.println("     -> member = " + member);
+                }
+            }
+
+
 
 
             tx.commit();
