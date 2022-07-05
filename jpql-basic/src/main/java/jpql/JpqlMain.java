@@ -25,15 +25,17 @@ public class JpqlMain {
 
             for (int i = 0; i < 100; i++) {
                 Member member = new Member();
-                member.setUsername("member" + i);
                 member.setAge(i);
                 if (i < 30) {
+                    member.setUsername("member" + i);
                     member.setTeam(team1);
                     member.setType(MemberType.ADMIN);
                 } else if (i < 60) {
+                    member.setUsername("member" + i);
                     member.setTeam(team2);
                     member.setType(MemberType.USER);
                 } else {
+                    member.setUsername(null);
                     member.setTeam(team3);
                     member.setType(MemberType.ADMIN);
                 }
@@ -153,6 +155,62 @@ public class JpqlMain {
                     .setParameter("userType", MemberType.USER)  // 파라미터 바인딩 가능
                     .getResultList();
             System.out.println("typeList2.size = " + typeList2.size());
+
+            // 조건식 - CASE
+            String query =
+                    "select " +
+                            "case when m.age <= 10 then '학생요금' " +
+                            "     when m.age >= 60 then '경로요금' " +
+                            "     else '일반요금' " +
+                            "end " +
+                            "from Member m";
+            List<String> caseList = em.createQuery(query, String.class).getResultList();
+            for (String s : caseList) {
+                System.out.println("s = " + s);
+            }
+
+            // 조건식 - coalesce
+            List<String> coalesceList = em.createQuery("select coalesce(m.username, '이름 없는 회원') " +
+                            "as username " +
+                            "from Member m", String.class)
+                    .getResultList();
+            for (String s : coalesceList) {
+                System.out.println("s = " + s);
+            }
+
+            // 조건식 - nullif
+            List<String> nullList = em.createQuery("select nullif(m.username, 'member23') " +
+                            "from Member m", String.class)
+                    .getResultList();
+            System.out.println("nullLst = " + nullList.get(22));
+            System.out.println("nullLst = " + nullList.get(23));
+            System.out.println("nullLst = " + nullList.get(24));
+
+            // JPQL basic function
+            List<Integer> resultList1 = em.createQuery("select size(t.members) from Team t", Integer.class)
+                    .getResultList();
+            for (Integer integer : resultList1) {
+                System.out.println("integer = " + integer);
+            }
+
+            // JPQL defined function
+            // group_concat : List to String
+//            List<String> resultList2 = em.createQuery("select function('group_concat', m.username) from Member m", String.class)
+//                    .getResultList(); // JPA 표준 Query
+            List<String> resultList2 = em.createQuery("select group_concat(m.username) from Member m", String.class)
+                    .getResultList();   // Hibernate Query
+            for (String s : resultList2) {
+                int len = s.length();
+                System.out.println("s = " + s.substring(0, 25) + "..." + s.substring(len-25, len));
+            }
+
+            // fetch join
+            em.flush();
+            em.clear();
+            List<Member> fetchList = em.createQuery("select m from Member m", Member.class).getResultList();
+            for (Member member : fetchList) {
+                System.out.println("member = " + member.getUsername() + ", " + member.getTeam().getName());
+            }
 
 
             tx.commit();
