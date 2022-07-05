@@ -188,7 +188,7 @@ public class JpqlMain {
 
             // JPQL basic function
             List<Integer> resultList1 = em.createQuery("select size(t.members) from Team t", Integer.class)
-                    .getResultList();
+                    .getResultList();   // 5.4.14.Final -> 5.4.31.Final
             for (Integer integer : resultList1) {
                 System.out.println("integer = " + integer);
             }
