@@ -244,6 +244,35 @@ public class JpqlMain {
             }
 
 
+            // 엔티티를 파라미터로 전달 - 기본키 사용
+            Team teamA = new Team();
+            teamA.setName("teamA");
+            em.persist(teamA);
+
+            Member userA = new Member();
+            userA.setUsername("userA");
+            userA.setTeam(teamA);
+            em.persist(userA);
+
+            Member entityResult = em.createQuery("select m from Member m where m = :member", Member.class)
+                    .setParameter("member", userA)  // 살제 쿼리에서는 기본식별자(id) 사용
+                    .getSingleResult();
+            System.out.println("entityResult = " + entityResult);
+
+            // 식별자를 직접 전달
+            Member entityResult2 = em.createQuery("select m from Member m where m.id = :memberId", Member.class)
+                    .setParameter("memberId", userA.getId())  // 파리미터로 엔티티를 사용할 때와 같은 쿼리 나감
+                    .getSingleResult();
+            System.out.println("entityResult2 = " + entityResult2);
+
+            // 엔티티를 파라미터로 전달 - 외래키 사용
+            Member entityResult3 = em.createQuery("select m from Member m where m.team = :team", Member.class)
+                    .setParameter("team", teamA)  // 외래키 m.team_id(TEAM_ID) 사용
+                    .getSingleResult();
+            System.out.println("entityResult3 = " + entityResult3);
+
+
+
 
 
             tx.commit();
