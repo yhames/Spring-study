@@ -201,7 +201,7 @@ public class JpqlMain {
                     .getResultList();   // Hibernate Query
             for (String s : resultList2) {
                 int len = s.length();
-                System.out.println("s = " + s.substring(0, 25) + "..." + s.substring(len-25, len));
+                System.out.println("s = " + s.substring(0, 25) + "..." + s.substring(len - 25, len));
             }
 
             // fetch join : Many to one
@@ -272,7 +272,12 @@ public class JpqlMain {
             System.out.println("entityResult3 = " + entityResult3);
 
 
-
+            List<Member> namedList = em.createNamedQuery("Member.findByUsername", Member.class)
+                    .setParameter("username", "userA")
+                    .getResultList();
+            for (Member member : namedList) {
+                System.out.println("member = " + member);
+            }
 
 
             tx.commit();
