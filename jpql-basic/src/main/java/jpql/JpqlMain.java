@@ -280,6 +280,21 @@ public class JpqlMain {
             }
 
 
+            // bulk operation
+            int resultCount = em.createQuery("update Member m set m.age = 20").executeUpdate();
+            System.out.println("resultCount = " + resultCount);
+
+            System.out.println("userA.getAge() = " + userA.getAge());   // 벌크연산은 영속성컨텍스트를 무시
+            Member findUserA = em.find(Member.class, userA.getId());
+            System.out.println("findUserA = " + findUserA.getAge());    // 벌크연산은 영속성컨텍스트를 무시
+
+            em.clear(); // 벌크연산 수행 후 영속성컨텍스트 초기화
+            Member findUserA2 = em.find(Member.class, userA.getId());
+            System.out.println("findUserA2 = " + findUserA2.getAge());
+
+
+
+
             tx.commit();
         } catch (Exception e) {
             tx.rollback();
